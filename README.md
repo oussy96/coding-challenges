@@ -8,4 +8,4 @@ Language used - Python
 
 --- 
 Challenges :
-1. Write your own Cat-too[Write your own Cat-tool](https://github.com/oussy96/coding-challenges/tree/main/cat-tool)
+1. [Write your own Cat-tool](https://github.com/oussy96/coding-challenges/tree/main/cat-tool)
