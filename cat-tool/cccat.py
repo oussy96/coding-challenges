@@ -26,11 +26,8 @@ def set_parse_commands():
     return args
 
 
-def get_parse_filename(args):
-    return args.filename
-
-
-def get_input():
+def get_stdin():
+    # print(sys.stdin.read())
     return sys.stdin
 
 
@@ -38,7 +35,8 @@ def get_filepath(filename):
     return os.path.join(os.getcwd(), filename)
 
 
-def cat_file(filename):
+def read_file(filename):
+    result = ''
     try:
         # Open the file in read mode ('r')
         with open(filename, 'r') as file:
@@ -47,50 +45,55 @@ def cat_file(filename):
 
         # Print each line
         for line in lines:
-            print(line.strip())  # .strip() removes trailing newline characters
+            result += line
+        
+        return result
     except FileNotFoundError:
         print(f"Error: {filename} not found")
 
 
-def cat_input(stdin_):
+def read_input(stdin_):
+    result = ''
     for line in stdin_:
-        print(line.strip())
+        result += line.strip()
+    return result
 
-
-def cat_input_nb_lines(stdin_):
+def read_input_nb_lines(stdin_):
+    result = ''
     n = 1
     for line in stdin_:
-        print(f'{n} {line.strip()}')
+        result += f'{n}{line}' if line == '\n' else f'{n} {line}' 
         n += 1
+    return result
 
     
-def cat_input_nb_exc_nb_lines(stdin_):
+def read_input_nb_exc_nb_lines(stdin_):
+    result = ''
     n = 1
     for line in stdin_:
         if line == '\n':
-            print(line.strip())
+            result += line
         else:
-            print(f"{n} {line.strip()}")
+            result += f"{n} {line}"
             n = n + 1 
+    return result
 
-def cat_argument(args):
+
+def cc_cat(args):
     if args.filename:
-        file_arg = get_parse_filename(args)
-        for file in file_arg:
-            cat_file(get_filepath(file))
+        result = ''
+        for file in args.filename:
+            result += read_file(get_filepath(file))
+        return result
     elif args.read:
-        stdin_ = get_input()
-        cat_input(stdin_)
+        return read_input(get_stdin())
     elif args.number:
-        stdin_ = get_input()
-        cat_input_nb_lines(stdin_)
+        return read_input_nb_lines(get_stdin())
     elif args.bnumber:
-        stdin_ = get_input()
-        cat_input_nb_exc_nb_lines(stdin_)
+        return read_input_nb_exc_nb_lines(get_stdin())
 
 
 if __name__ == "__main__":
     # Build the files path
     args = set_parse_commands()
-    cat_argument(args)
-
+    print(cc_cat(args))
