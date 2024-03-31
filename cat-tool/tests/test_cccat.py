@@ -1,78 +1,116 @@
-from argparse import Namespace
-import io
 import unittest
-from cccat import cc_cat, read_input, read_input_nb_lines, read_input_nb_exc_nb_lines
+from unittest.mock import patch
+from io import StringIO
+import os
 import sys
+import argparse
 
+# Import the functions from my script cccat
+from cccat import parse_arguments, read_file_content, read_input, read_input_numbered_lines, read_input_bnumbered_lines, cc_cat
 
-class TestCccat(unittest.TestCase):
-
-    def test_file1(self):
-        self.assertEqual(cc_cat(Namespace(filename=['test.txt'], read=False, number=False, bnumber=False))
-                         , '''"Your heart is the size of an ocean. Go find yourself in its hidden depths."
-"The Bay of Bengal is hit frequently by cyclones. The months of November and May, in particular, are dangerous in this regard."
-"Thinking is the capital, Enterprise is the way, Hard Work is the solution."
-"If You Can'T Make It Good, At Least Make It Look Good."
-"Heart be brave. If you cannot be brave, just go. Love's glory is not a small thing."
-"It is bad for a young man to sin; but it is worse for an old man to sin."
-"If You Are Out To Describe The Truth, Leave Elegance To The Tailor."
-"O man you are busy working for the world, and the world is busy trying to turn you out."
-"While children are struggling to be unique, the world around them is trying all means to make them look like everybody else."
-"These Capitalists Generally Act Harmoniously And In Concert, To Fleece The People."
-''')
-
-    def test_file2(self):
-        self.assertEqual(cc_cat(Namespace(filename=['test2.txt'], read=False, number=False, bnumber=False))
-                         , '''"I Don'T Believe In Failure. It Is Not Failure If You Enjoyed The Process."
-"Do not get elated at any victory, for all such victory is subject to the will of God."
-"Wear gratitude like a cloak and it will feed every corner of your life."
-"If you even dream of beating me you'd better wake up and apologize."
-"I Will Praise Any Man That Will Praise Me."
-"One Of The Greatest Diseases Is To Be Nobody To Anybody."
-"I'm so fast that last night I turned off the light switch in my hotel room and was in bed before the room was dark."
-"People Must Learn To Hate And If They Can Learn To Hate, They Can Be Taught To Love."
-"Everyone has been made for some particular work, and the desire for that work has been put in every heart."
-"The less of the World, the freer you live."
-''')
-        
-    def test_files(self):
-        self.assertEqual(cc_cat(Namespace(filename=['test.txt', 'test2.txt'], read=False, number=False, bnumber=False))
-                         , '''"Your heart is the size of an ocean. Go find yourself in its hidden depths."
-"The Bay of Bengal is hit frequently by cyclones. The months of November and May, in particular, are dangerous in this regard."
-"Thinking is the capital, Enterprise is the way, Hard Work is the solution."
-"If You Can'T Make It Good, At Least Make It Look Good."
-"Heart be brave. If you cannot be brave, just go. Love's glory is not a small thing."
-"It is bad for a young man to sin; but it is worse for an old man to sin."
-"If You Are Out To Describe The Truth, Leave Elegance To The Tailor."
-"O man you are busy working for the world, and the world is busy trying to turn you out."
-"While children are struggling to be unique, the world around them is trying all means to make them look like everybody else."
-"These Capitalists Generally Act Harmoniously And In Concert, To Fleece The People."
-"I Don'T Believe In Failure. It Is Not Failure If You Enjoyed The Process."
-"Do not get elated at any victory, for all such victory is subject to the will of God."
-"Wear gratitude like a cloak and it will feed every corner of your life."
-"If you even dream of beating me you'd better wake up and apologize."
-"I Will Praise Any Man That Will Praise Me."
-"One Of The Greatest Diseases Is To Be Nobody To Anybody."
-"I'm so fast that last night I turned off the light switch in my hotel room and was in bed before the room was dark."
-"People Must Learn To Hate And If They Can Learn To Hate, They Can Be Taught To Love."
-"Everyone has been made for some particular work, and the desire for that work has been put in every heart."
-"The less of the World, the freer you live."
-''')
-        
-    def test_input(self):
-        sys.stdin = io.StringIO("test")
-        self.assertEqual(read_input(sys.stdin)
-                         , 'test'.strip())
+class TestCCCat(unittest.TestCase):
     
-    def test_input_number(self):
-        sys.stdin = io.StringIO("test\n\ntest")
-        self.assertEqual(read_input_nb_lines(sys.stdin)
-                         , '''1 test\n2\n3 test''')
+    # Test parse_arguments function with arguments patched
+    @patch('sys.argv', ['cccat', 'file1.txt'])
+    def test_parse_arguments_with_file(self):
+        args = parse_arguments()
+        self.assertEqual(args.filename, ['file1.txt'])
+        self.assertFalse(args.read)
+        self.assertFalse(args.number)
+        self.assertFalse(args.bnumber)
+
+    @patch('sys.argv', ['cccat', '-'])
+    def test_parse_arguments_with_standard_input(self):
+        args = parse_arguments()
+        self.assertEqual(args.filename, [])
+        self.assertTrue(args.read)
+        self.assertFalse(args.number)
+        self.assertFalse(args.bnumber)
+
+    @patch('sys.argv', ['cccat', '-n'])
+    def test_parse_arguments_with_numbered_lines(self):
+        args = parse_arguments()
+        self.assertEqual(args.filename, [])
+        self.assertFalse(args.read)
+        self.assertTrue(args.number)
+        self.assertFalse(args.bnumber)
+
+    @patch('sys.argv', ['cccat', '-b'])
+    def test_parse_arguments_with_bnumbered_lines(self):
+        args = parse_arguments()
+        self.assertEqual(args.filename, [])
+        self.assertFalse(args.read)
+        self.assertFalse(args.number)
+        self.assertTrue(args.bnumber)
     
-    def test_input_bnumber(self):
-        sys.stdin = io.StringIO("test\n\ntest")
-        self.assertEqual(read_input_nb_exc_nb_lines((sys.stdin))
-                         , "1 test\n\n2 test")
+    # Test read_file_content function
+    def test_read_file_content(self):
+        # Create a temporary file
+        with open('test_file.txt', 'w') as f:
+            f.write('Test content')
         
+        content = read_file_content('test_file.txt')
+        self.assertEqual(content, 'Test content')
+        
+        # Clean up
+        os.remove('test_file.txt')
+
+    # Test reading content from multiple files
+    def test_cc_cat_multiple_files(self):
+        # Create temporary files with content
+        with open('file1.txt', 'w') as f1, open('file2.txt', 'w') as f2:
+            f1.write('Content from file 1\n')
+            f2.write('Content from file 2\n')
+        
+        # Call cc_cat with file names as arguments
+        args = argparse.Namespace(filename=['file1.txt', 'file2.txt'], read=False, number=False, bnumber=False)
+        output = cc_cat(args)
+        
+        # Verify that the concatenated content of both files is returned correctly
+        expected_output = 'Content from file 1\nContent from file 2\n'
+        self.assertEqual(output, expected_output)
+        
+        # Clean up temporary files
+        os.remove('file1.txt')
+        os.remove('file2.txt')
+    
+    # Test read_input function
+    @patch('sys.stdin', StringIO('Test input'))
+    def test_read_input(self):
+        input_ = read_input()
+        self.assertEqual(input_, 'Test input')
+    
+    # Test read_input_numbered_lines function
+    @patch('sys.stdin', StringIO('Line 1\n\nLine 2\nLine 3\n'))
+    def test_read_input_numbered_lines(self):
+        numbered_lines = read_input_numbered_lines()
+        self.assertEqual(numbered_lines, '1 Line 1\n2 \n3 Line 2\n4 Line 3\n')
+    
+    # Test read_input_bnumbered_lines function
+    @patch('sys.stdin', StringIO('Line 1\n\nLine 2\n\nLine 3\n'))
+    def test_read_input_bnumbered_lines(self):
+        bnumbered_lines = read_input_bnumbered_lines()
+        self.assertEqual(bnumbered_lines, '1 Line 1\n\n2 Line 2\n\n3 Line 3\n')
+
+    # Test cc_cat function
+    @patch('sys.stdin', StringIO('Line 1\nLine 2\nLine 3\n'))
+    def test_cc_cat_read_input(self):
+        args = argparse.Namespace(filename=[], read=True, number=False, bnumber=False)
+        output = cc_cat(args)
+        self.assertEqual(output, 'Line 1\nLine 2\nLine 3\n')
+    
+    @patch('sys.stdin', StringIO('Line 1\nLine 2\nLine 3\n'))
+    def test_cc_cat_read_input_numbered_lines(self):
+        args = argparse.Namespace(filename=[], read=False, number=True, bnumber=False)
+        output = cc_cat(args)
+        self.assertEqual(output, '1 Line 1\n2 Line 2\n3 Line 3\n' )
+
+    @patch('sys.stdin', StringIO('Line 1\n\nLine 2\n\nLine 3\n'))
+    def test_cc_cat_read_input_bnumbered_lines(self):
+        args = argparse.Namespace(filename=[], read=False, number=False, bnumber=True)
+        output = cc_cat(args)
+        self.assertEqual(output, '1 Line 1\n\n2 Line 2\n\n3 Line 3\n')
+
+
 if __name__ == '__main__':
     unittest.main()
