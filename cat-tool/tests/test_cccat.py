@@ -8,7 +8,7 @@ import argparse
 # Import the functions from my script cccat
 from cccat import parse_arguments, read_file_content, read_input, read_input_numbered_lines, read_input_bnumbered_lines, cc_cat
 
-class TestCCCat(unittest.TestCase):
+class TestCccat(unittest.TestCase):
     
     # Test parse_arguments function with arguments patched
     @patch('sys.argv', ['cccat', 'file1.txt'])
@@ -26,6 +26,24 @@ class TestCCCat(unittest.TestCase):
         self.assertTrue(args.read)
         self.assertFalse(args.number)
         self.assertFalse(args.bnumber)
+
+    @patch('sys.argv', ['cccat'])
+    def test_parse_arguments_with_no_arguments_passed(self):
+        # Redirect stdin to provide input
+        with patch('sys.stdin', StringIO("Test standard input")):
+            args = parse_arguments()
+            # Get the output directly from cc_cat
+            output = cc_cat(args)
+            # Check if no filename is provided
+            self.assertEqual(args.filename, [])
+            
+            # Check if other flags are not set
+            self.assertFalse(args.read)
+            self.assertFalse(args.number)
+            self.assertFalse(args.bnumber)
+            
+            # Check if the 'read' command is executed correctly
+            self.assertEqual(output, "Test standard input")
 
     @patch('sys.argv', ['cccat', '-n'])
     def test_parse_arguments_with_numbered_lines(self):

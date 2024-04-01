@@ -102,7 +102,7 @@ def cc_cat(args):
     """
     if args.filename:
         return ''.join(read_file_content(filename) for filename in args.filename)
-    elif args.read:
+    elif args.read or not any(vars(args).values()): # If no arguments are provided, execute the 'read' command by default
         return read_input()
     elif args.number:
         return read_input_numbered_lines()
