@@ -113,6 +113,10 @@ Output :
 ```
 head -n2 test2.txt | python cccat.py -
 ```
+OR
+```
+head -n2 test2.txt | python cccat.py
+```
 Output :
 ```
 "I Don'T Believe In Failure. It Is Not Failure If You Enjoyed The Process."
