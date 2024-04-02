@@ -42,10 +42,17 @@ python -m venv venv
 source venv/bin/activate
 ```
 
+### 5. Install the package unsing setup.py
+To install the package and be able to run the program from anywhere, execute the following command in the root directory of the project (where the `setup.py` file is located):
+```
+pip install .
+```
+This will install the package locally on your system, allowing you to run the `cccat` command from any directory.
+
 ## Ready to use my cat-tool commands
 ### Command to know the different possible commands of my cat-tool
 ```
-% python cccat.py --help
+% cccat --help
 ```
 Output :
 ```
@@ -65,7 +72,7 @@ options:
 
 ### Command to display content of one file
 ```
-python cccat.py test.txt
+cccat test.txt
 ```
 Output :
 ```
@@ -83,7 +90,7 @@ Output :
 
 ### Command to display content of many files
 ```
-python cccat.py test.txt test2.txt
+cccat test.txt test2.txt
 ```
 Output :
 ```
@@ -111,11 +118,11 @@ Output :
 
 ### Command to read input from standard in
 ```
-head -n2 test2.txt | python cccat.py -
+head -n2 test2.txt | cccat -
 ```
 OR
 ```
-head -n2 test2.txt | python cccat.py
+head -n2 test2.txt | cccat
 ```
 Output :
 ```
@@ -125,7 +132,7 @@ Output :
 
 ### Command to number all the lines as they’re printed out
 ```
-% head -n3 test.txt | python cccat.py -n
+% head -n3 test.txt | cccat -n
 ```
 Output :
 ```
@@ -135,7 +142,7 @@ Output :
 ```
 Also the blank-lines :
 ```
-sed G test.txt | python cccat.py -n | head -n4
+sed G test.txt | cccat -n | head -n4
 ```
 Output :
 ```
@@ -147,7 +154,7 @@ Output :
 
 ### Command to number the lines as they’re printed out except the blank-lines
 ```
-sed G test.txt | python cccat.py -b | head -n5
+sed G test.txt | cccat -b | head -n5
 ```
 Output :
 ```

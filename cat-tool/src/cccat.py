@@ -22,19 +22,6 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def get_filepath(filename):
-    """
-    Get the absolute file path.
-
-    Args:
-        filename (str): Name of the file.
-
-    Returns:
-        str: Absolute file path.
-    """
-    return os.path.join(os.getcwd(), filename)
-
-
 def read_file_content(filename):
     """
     Read and return the content of a file.
@@ -90,16 +77,14 @@ def read_input_bnumbered_lines():
     return result
 
 
-def cc_cat(args):
+def cc_cat():
     """
     Execute the 'cccat' command based on the provided arguments.
-
-    Args:
-        args (argparse.Namespace): Parsed command line arguments.
 
     Returns:
         str: Output of the 'cccat' command.
     """
+    args = parse_arguments()
     if args.filename:
         return ''.join(read_file_content(filename) for filename in args.filename)
     elif args.read or not any(vars(args).values()): # If no arguments are provided, execute the 'read' command by default
@@ -111,5 +96,4 @@ def cc_cat(args):
 
 
 if __name__ == "__main__":
-    args = parse_arguments()
-    print(cc_cat(args))
+    print(cc_cat())

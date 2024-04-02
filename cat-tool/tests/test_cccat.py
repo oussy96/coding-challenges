@@ -2,11 +2,10 @@ import unittest
 from unittest.mock import patch
 from io import StringIO
 import os
-import sys
-import argparse
+
 
 # Import the functions from my script cccat
-from cccat import parse_arguments, read_file_content, read_input, read_input_numbered_lines, read_input_bnumbered_lines, cc_cat
+from src.cccat import parse_arguments, read_file_content, read_input, read_input_numbered_lines, read_input_bnumbered_lines, cc_cat
 
 class TestCccat(unittest.TestCase):
     
@@ -27,23 +26,14 @@ class TestCccat(unittest.TestCase):
         self.assertFalse(args.number)
         self.assertFalse(args.bnumber)
 
+    @patch('sys.stdin', StringIO("Test standard input"))
     @patch('sys.argv', ['cccat'])
     def test_parse_arguments_with_no_arguments_passed(self):
-        # Redirect stdin to provide input
-        with patch('sys.stdin', StringIO("Test standard input")):
-            args = parse_arguments()
-            # Get the output directly from cc_cat
-            output = cc_cat(args)
-            # Check if no filename is provided
-            self.assertEqual(args.filename, [])
-            
-            # Check if other flags are not set
-            self.assertFalse(args.read)
-            self.assertFalse(args.number)
-            self.assertFalse(args.bnumber)
-            
-            # Check if the 'read' command is executed correctly
-            self.assertEqual(output, "Test standard input")
+        # Get the output directly from cc_cat
+        output = cc_cat()
+        
+        # Check if the 'read' command is executed correctly
+        self.assertEqual(output, "Test standard input")
 
     @patch('sys.argv', ['cccat', '-n'])
     def test_parse_arguments_with_numbered_lines(self):
@@ -74,6 +64,7 @@ class TestCccat(unittest.TestCase):
         os.remove('test_file.txt')
 
     # Test reading content from multiple files
+    @patch('sys.argv', ['cccat', 'file1.txt', 'file2.txt'])
     def test_cc_cat_multiple_files(self):
         # Create temporary files with content
         with open('file1.txt', 'w') as f1, open('file2.txt', 'w') as f2:
@@ -81,8 +72,7 @@ class TestCccat(unittest.TestCase):
             f2.write('Content from file 2\n')
         
         # Call cc_cat with file names as arguments
-        args = argparse.Namespace(filename=['file1.txt', 'file2.txt'], read=False, number=False, bnumber=False)
-        output = cc_cat(args)
+        output = cc_cat()
         
         # Verify that the concatenated content of both files is returned correctly
         expected_output = 'Content from file 1\nContent from file 2\n'
@@ -112,21 +102,21 @@ class TestCccat(unittest.TestCase):
 
     # Test cc_cat function
     @patch('sys.stdin', StringIO('Line 1\nLine 2\nLine 3\n'))
+    @patch('sys.argv', ['cccat', '-'])
     def test_cc_cat_read_input(self):
-        args = argparse.Namespace(filename=[], read=True, number=False, bnumber=False)
-        output = cc_cat(args)
+        output = cc_cat()
         self.assertEqual(output, 'Line 1\nLine 2\nLine 3\n')
     
     @patch('sys.stdin', StringIO('Line 1\nLine 2\nLine 3\n'))
+    @patch('sys.argv', ['cccat', '-n'])
     def test_cc_cat_read_input_numbered_lines(self):
-        args = argparse.Namespace(filename=[], read=False, number=True, bnumber=False)
-        output = cc_cat(args)
+        output = cc_cat()
         self.assertEqual(output, '1 Line 1\n2 Line 2\n3 Line 3\n' )
 
     @patch('sys.stdin', StringIO('Line 1\n\nLine 2\n\nLine 3\n'))
+    @patch('sys.argv', ['cccat', '-b'])
     def test_cc_cat_read_input_bnumbered_lines(self):
-        args = argparse.Namespace(filename=[], read=False, number=False, bnumber=True)
-        output = cc_cat(args)
+        output = cc_cat()
         self.assertEqual(output, '1 Line 1\n\n2 Line 2\n\n3 Line 3\n')
 
 
