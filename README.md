@@ -9,3 +9,4 @@ Language used - Python
 --- 
 Challenges :
 1. [Write your own Cat-tool](https://github.com/oussy96/coding-challenges/tree/main/cat-tool)
+2. [Write your own Discord bot](https://github.com/oussy96/coding-challenges/tree/main/discord-bot)
