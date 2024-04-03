@@ -1,6 +1,6 @@
 # Environnement virtuel
 cat-tool/venv/
-discord-boot/venv/
+discord-bot/venv/
 
 # Fichiers de cache
 __pycache__/
