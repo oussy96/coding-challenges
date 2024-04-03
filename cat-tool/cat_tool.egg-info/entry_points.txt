@@ -1,2 +1,0 @@
-[console_scripts]
-cccat = src.cccat:cc_cat

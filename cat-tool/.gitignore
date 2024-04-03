@@ -13,3 +13,6 @@ __pycache__/
 
 # Fichiers de logs
 /logs/
+
+# Entry point
+*.egg-info

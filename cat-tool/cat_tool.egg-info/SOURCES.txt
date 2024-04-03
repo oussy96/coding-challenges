@@ -1,9 +1,0 @@
-README.md
-setup.py
-cat_tool.egg-info/PKG-INFO
-cat_tool.egg-info/SOURCES.txt
-cat_tool.egg-info/dependency_links.txt
-cat_tool.egg-info/entry_points.txt
-cat_tool.egg-info/top_level.txt
-src/cccat.py
-tests/test_cccat.py
