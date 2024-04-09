@@ -1,6 +1,6 @@
 # Environnement virtuel
 cat-tool/venv/
-discord-boot/venv/
+discord-bot/venv/
 
 # Fichiers de cache
 __pycache__/
@@ -17,3 +17,6 @@ __pycache__/
 
 # Entry point
 *.egg-info
+
+# Config Discord Token
+discord-bot/src/config
